@@ -6,17 +6,17 @@ import Keys._
 object Dependencies {
   import DependencyHelpers._
 
-  val sparkVersion = "2.4.0"
-  val scalaTestVersion = "3.0.0"
-  val akkaVersion = "2.5.12"
-  val akkaHttpVersion = "10.0.3"
+  val sparkVersion = "2.4.3"
+  val scalaTestVersion = "3.0.8"
+  val akkaVersion = "2.5.23"
+  val akkaHttpVersion = "10.1.8"
   val springBootVersion = "2.0.4.RELEASE"
   lazy val logbackVersion = "1.2.3"
   lazy val loggingVersion = "3.9.0"
   lazy val slf4jVersion = "1.7.25"
   lazy val awsSdkVersion = "1.11.349"
   val tensorflowVersion = "1.11.0"
-  val xgboostVersion = "0.81"
+  val xgboostVersion = "0.90-tres2"
   val hadoopVersion = "2.6.5" // matches spark version
 
   object Compile {
@@ -66,8 +66,8 @@ object Dependencies {
       "ch.qos.logback" % "logback-classic" % logbackVersion,
       "com.typesafe.scala-logging" %% "scala-logging" % loggingVersion
     )
-    val xgboostDep = "ml.dmlc" % "xgboost4j" % xgboostVersion
-    val xgboostSparkDep = "ml.dmlc" % "xgboost4j-spark" % xgboostVersion
+    val xgboostDep = "ml.dmlc" %% "xgboost4j" % xgboostVersion
+    val xgboostSparkDep = "ml.dmlc" %% "xgboost4j-spark" % xgboostVersion
     val hadoop = "org.apache.hadoop" % "hadoop-client" % hadoopVersion
   }
 

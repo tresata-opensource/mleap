@@ -8,12 +8,12 @@ import sbtrelease.ReleasePlugin.autoImport._
 import xerial.sbt.Sonatype.autoImport._
 
 object Common {
-  lazy val defaultMleapSettings = defaultSettings ++ mleapSettings ++ sonatypeSettings
-  lazy val defaultBundleSettings = defaultSettings ++ bundleSettings ++ sonatypeSettings
-  lazy val defaultMleapXgboostSparkSettings = defaultMleapSettings ++ sonatypeSettings
+  lazy val defaultMleapSettings = defaultSettings ++ mleapSettings ++ publishSettings
+  lazy val defaultBundleSettings = defaultSettings ++ bundleSettings ++ publishSettings
+  lazy val defaultMleapXgboostSparkSettings = defaultMleapSettings ++ publishSettings
   lazy val defaultMleapServingSettings = defaultMleapSettings ++ noPublishSettings
 
-  lazy val defaultSettings = buildSettings ++ sonatypeSettings
+  lazy val defaultSettings = buildSettings ++ publishSettings
 
   lazy val buildSettings: Seq[Def.Setting[_]] = Seq(
     scalaVersion := "2.11.8",
@@ -24,7 +24,7 @@ object Common {
     resolvers += Resolver.mavenLocal,
     resolvers ++= {
       // Only add Sonatype Snapshots if this version itself is a snapshot version
-      if(isSnapshot.value) {
+      if(version.value.endsWith("SNAPSHOT")) {
         Seq(
           "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
           "ASF Snapshots" at "https://repository.apache.org/content/groups/snapshots"
@@ -32,7 +32,8 @@ object Common {
       } else {
         Seq()
       }
-    }
+    },
+    resolvers += "bintray-tresata-maven" at "https://dl.bintray.com/tresata/maven"
   )
 
   lazy val mleapSettings: Seq[Def.Setting[_]] = Seq(organization := "ml.combust.mleap")
@@ -43,17 +44,18 @@ object Common {
     publishTo := None
   )
 
-  lazy val sonatypeSettings: Seq[Def.Setting[_]] = Seq(
-    sonatypeProfileName := "ml.combust",
-    releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+  lazy val publishSettings: Seq[Def.Setting[_]] = Seq(
+    //sonatypeProfileName := "ml.combust",
+    //releasePublishArtifactsAction := PgpKeys.publishSigned.value,
     publishMavenStyle := true,
     publishTo := Some({
-      if (isSnapshot.value) {
-        Opts.resolver.sonatypeSnapshots
+      if (version.value.endsWith("SNAPSHOT")) {
+        "oss-libs-snapshot-local"  at "http://server02.tresata.com:8081/artifactory/oss-libs-snapshot-local"
       } else {
-        Opts.resolver.sonatypeStaging
+        "oss-libs-release-local" at "http://server02.tresata.com:8081/artifactory/oss-libs-release-local"
       }
     }),
+    credentials += Credentials(Path.userHome / ".m2" / "credentials_artifactory"),
     publishArtifact in Test := false,
     pomIncludeRepository := { _ => false },
     licenses := Seq("Apache 2.0 License" -> url("http://www.apache.org/licenses/LICENSE-2.0.html")),

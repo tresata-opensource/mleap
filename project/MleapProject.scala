@@ -28,7 +28,7 @@ object MleapProject {
 
   var rootSettings = Release.settings ++
     Common.buildSettings ++
-    Common.sonatypeSettings ++
+    Common.publishSettings ++
     Seq(publishArtifact := false)
 
   lazy val root = Project(
